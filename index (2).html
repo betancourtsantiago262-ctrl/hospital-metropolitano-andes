@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Expediente Digital · Hospital Metropolitano de los Andes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B2545; --navy-2:#123863; --teal:#1B998B; --teal-2:#0E7C70;
+  --paper:#F6F8F9; --card:#FFFFFF; --ink:#152238; --sub:#5B6B7C;
+  --line:#DCE3E8; --amber:#C9820A; --red:#B3311E;
+  --radius:10px;
+  padding-top: env(safe-area-inset-top,0px); padding-bottom: env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#0E1620; --card:#141F2B; --ink:#E7EDF2; --sub:#93A4B5; --line:#26333F;
+}}
+:root[data-theme="dark"]{ --paper:#0E1620; --card:#141F2B; --ink:#E7EDF2; --sub:#93A4B5; --line:#26333F; }
+*{box-sizing:border-box;}
+html{scroll-padding-top: env(safe-area-inset-top,0px);}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Source Sans 3',system-ui,sans-serif;line-height:1.5;}
+h1,h2,h3,.serif{font-family:'Zilla Slab',Georgia,serif;}
+a{color:var(--teal-2);}
+
+.topbar{position:sticky;top:0;z-index:20;background:linear-gradient(120deg,var(--navy),var(--navy-2));color:#fff;
+  padding:14px 20px calc(14px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:12px;}
+.topbar .mark{width:34px;height:34px;border-radius:8px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Zilla Slab',serif;flex-shrink:0;}
+.topbar .name{font-family:'Zilla Slab',serif;font-weight:600;font-size:1.05rem;}
+.topbar .tag{font-size:.78rem;color:#BFD3E6;}
+.topbar .badge{margin-left:auto;font-size:.7rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  padding:5px 10px;border-radius:20px;white-space:nowrap;}
+
+.shell{display:flex;max-width:1280px;margin:0 auto;min-height:100vh;}
+nav.side{width:270px;flex-shrink:0;padding:22px 14px 40px;border-right:1px solid var(--line);position:sticky;
+  top:64px;align-self:flex-start;max-height:calc(100vh - 64px);overflow-y:auto;}
+nav.side .grp{margin-bottom:6px;}
+nav.side .grp-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);
+  padding:14px 10px 6px;font-weight:600;}
+nav.side button{display:block;width:100%;text-align:left;background:none;border:none;color:var(--ink);
+  font:inherit;font-size:.88rem;padding:8px 10px;border-radius:8px;cursor:pointer;border-left:3px solid transparent;}
+nav.side button:hover{background:var(--card);}
+nav.side button.active{background:var(--card);border-left-color:var(--teal);color:var(--teal-2);font-weight:600;}
+
+main{flex:1;padding:28px 32px 70px;min-width:0;}
+.doc{display:none;max-width:840px;}
+.doc.active{display:block;}
+.letterhead{border-bottom:3px solid var(--teal);padding-bottom:14px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;}
+.letterhead h1{font-size:1.5rem;margin:0 0 4px;color:var(--navy-2);}
+.letterhead .meta{color:var(--sub);font-size:.85rem;}
+.letterhead .stamp{font-size:.7rem;border:1px solid var(--teal);color:var(--teal-2);padding:5px 10px;border-radius:6px;white-space:nowrap;}
+.doc p.lead{color:var(--sub);margin-top:-8px;margin-bottom:20px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;}
+.card h3{margin:0 0 10px;font-size:1.02rem;color:var(--navy-2);}
+table{width:100%;border-collapse:collapse;font-size:.87rem;}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;}
+th{background:var(--paper);color:var(--sub);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;}
+.tbl-wrap{overflow-x:auto;}
+ul.pl{margin:6px 0;padding-left:20px;}
+ul.pl li{margin-bottom:4px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+.pill{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:20px;background:rgba(27,153,139,.12);color:var(--teal-2);font-weight:600;}
+.pill.warn{background:rgba(201,130,10,.12);color:var(--amber);}
+.pill.crit{background:rgba(179,49,30,.12);color:var(--red);}
+.sig{margin-top:18px;display:flex;gap:40px;color:var(--sub);font-size:.85rem;flex-wrap:wrap;}
+.sig div{border-top:1px solid var(--line);padding-top:6px;min-width:180px;}
+.bars{display:flex;gap:16px;align-items:flex-end;height:150px;border-bottom:1px solid var(--line);padding:0 6px 4px;}
+.bars .bar{flex:1;text-align:center;font-size:.7rem;color:var(--sub);}
+.bars .bar i{display:block;background:linear-gradient(180deg,var(--teal),var(--teal-2));border-radius:4px 4px 0 0;margin:0 auto 6px;}
+.foot{margin-top:26px;font-size:.75rem;color:var(--sub);text-align:right;}
+.mob-nav{display:none;}
+
+/* ---- topbar controls ---- */
+.tb-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff;font:inherit;
+  font-size:.78rem;padding:6px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;}
+.tb-btn:hover{background:rgba(255,255,255,.22);}
+
+/* ---- search ---- */
+.search-wrap{padding:2px 4px 12px;}
+.search-wrap input{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);
+  color:var(--ink);font:inherit;font-size:.85rem;}
+.search-wrap input:focus{outline:2px solid var(--teal);outline-offset:1px;}
+nav.side .grp.hide,nav.side button.hide{display:none;}
+
+/* ---- hero (Inicio) ---- */
+.hero{position:relative;border-radius:14px;padding:32px 30px;margin-bottom:20px;overflow:hidden;
+  background:radial-gradient(1200px 340px at 100% -10%,rgba(27,153,139,.35),transparent),linear-gradient(135deg,var(--navy),var(--navy-2));
+  color:#fff;}
+.hero h1{font-size:1.9rem;margin:0 0 8px;color:#fff;}
+.hero p{max-width:60ch;color:#CFE1EE;margin:0 0 6px;}
+.hero .who{margin-top:14px;font-size:.85rem;color:#9FD8CD;}
+.ekg{position:absolute;bottom:0;left:0;width:100%;height:52px;opacity:.55;}
+.ekg path{fill:none;stroke:#4FD3BE;stroke-width:2;stroke-dasharray:900;stroke-dashoffset:900;animation:draw 3.2s ease-out forwards;}
+@keyframes draw{to{stroke-dashoffset:0;}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin:22px 0;}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:left;}
+.kpi b{display:block;font-family:'Zilla Slab',serif;font-size:1.7rem;color:var(--teal-2);line-height:1;}
+.kpi span{font-size:.76rem;color:var(--sub);}
+.ring-wrap{display:flex;align-items:center;gap:16px;}
+.ring{transform:rotate(-90deg);}
+.ring circle{fill:none;stroke-width:9;}
+.ring .bg{stroke:var(--line);}
+.ring .fg{stroke:var(--teal);stroke-linecap:round;stroke-dasharray:264;stroke-dashoffset:264;animation:ring 1.6s .3s ease-out forwards;}
+@keyframes ring{to{stroke-dashoffset:16;}}
+.reveal{animation:up .55s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.quicknav{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.qn{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;text-align:left;font:inherit;color:var(--ink);}
+.qn:hover{border-color:var(--teal);}
+.qn b{display:block;font-size:.92rem;margin-bottom:3px;}
+.qn small{color:var(--sub);font-size:.78rem;}
+
+@media print{
+  .topbar,nav.side,.sig~.foot,.no-print{display:none!important;}
+  main{padding:0;}
+  .doc{display:none;}
+  .doc.active{display:block!important;}
+  body{background:#fff;}
+}
+@media(max-width:860px){
+  .shell{flex-direction:column;}
+  nav.side{position:static;width:100%;max-height:none;border-right:none;border-bottom:1px solid var(--line);}
+  main{padding:22px 16px 60px;}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="mark">M</div>
+  <div><div class="name">Hospital Metropolitano de los Andes S.A.S.</div><div class="tag">Salas de Cirugía · Central de Reprocesamiento de Dispositivos Médicos</div></div>
+  <div class="badge">Expediente digital · Res. 3100/2019 · Creado por Santiago Betancourth</div>
+  <button class="tb-btn no-print" onclick="window.print()">⎙ Imprimir</button>
+  <button class="tb-btn no-print" id="themeBtn" onclick="toggleTheme()">🌙 Modo oscuro</button>
+</div>
+<div class="shell">
+<nav class="side" id="nav">
+<div class="search-wrap"><input id="searchBox" type="text" placeholder="Buscar documento..." oninput="filterNav(this.value)"></div>
+</nav>
+<main id="main"></main>
+</div>
+
+<script>
+const DOCS = [
+{group:"Inicio", id:"inicio", title:"Panorama institucional", meta:"", body:`__HERO__`},
+{group:"Talento humano", id:"cv", title:"Hojas de vida y certificaciones", meta:"Gestión Humana · Vigente 2026", body:`
+<p class="lead">Perfiles del equipo líder del servicio quirúrgico y de la Central de Reprocesamiento, con soportes de formación y certificación activa.</p>
+<div class="grid2">
+<div class="card"><h3>María Fernanda Duarte Rico</h3>
+<p style="margin:0 0 8px"><span class="pill">Instrumentadora Quirúrgica Jefe</span></p>
+<table><tr><th>Formación</th><td>Instrumentación Quirúrgica, Universidad El Bosque · Esp. en Gerencia de Servicios de Salud, Univ. CES</td></tr>
+<tr><th>Registro RETHUS</th><td>IQ-BOG-041872</td></tr>
+<tr><th>Experiencia</th><td>12 años, 7 en el cargo actual</td></tr>
+<tr><th>Certificaciones vigentes</th><td>RCP básico y avanzado (2026), Bioseguridad y manejo de residuos (2026), Auditoría interna Res. 3100/2019 (2025)</td></tr></table></div>
+<div class="card"><h3>Carlos Andrés Peña Molina</h3>
+<p style="margin:0 0 8px"><span class="pill">Coordinador Central de Reprocesamiento</span></p>
+<table><tr><th>Formación</th><td>Tecnólogo en Instrumentación Quirúrgica · Diplomado en Procesos de Esterilización, Fund. Univ. Sanitas</td></tr>
+<tr><th>Registro RETHUS</th><td>IQ-BOG-052360</td></tr>
+<tr><th>Experiencia</th><td>9 años en Central de Reprocesamiento</td></tr>
+<tr><th>Certificaciones vigentes</th><td>Auditor interno ISO 13485 (2025), Validación de ciclos de esterilización AAMI ST79 (2026)</td></tr></table></div>
+</div>
+<div class="card"><h3>Cobertura de certificaciones del equipo (20 instrumentadores / 10 técnicos CRE)</h3>
+<div class="tbl-wrap"><table><tr><th>Certificación</th><th>% personal certificado</th><th>Próximo refuerzo</th></tr>
+<tr><td>Bioseguridad y manejo de residuos hospitalarios</td><td>100 %</td><td>Nov. 2026</td></tr>
+<tr><td>RCP básico</td><td>100 %</td><td>Ene. 2027</td></tr>
+<tr><td>Manejo de autoclaves y control biológico</td><td>90 % (técnicos CRE)</td><td>Oct. 2026</td></tr>
+<tr><td>Lista de chequeo de cirugía segura</td><td>100 %</td><td>Dic. 2026</td></tr></table></div></div>
+`},
+{group:"Talento humano", id:"capacitacion", title:"Plan de capacitación del personal", meta:"Educación continua · Programación anual 2026", body:`
+<p class="lead">Programa anual de formación del servicio quirúrgico y la Central de Reprocesamiento, alineado con la Resolución 3100 de 2019.</p>
+<div class="card"><div class="tbl-wrap"><table><tr><th>Tema</th><th>Población objetivo</th><th>Frecuencia</th><th>Intensidad</th><th>Última sesión</th></tr>
+<tr><td>Higiene de manos (estrategia OMS 5 momentos)</td><td>Todo el personal asistencial</td><td>Anual + refuerzo trimestral</td><td>2 h</td><td>Ago. 2026</td></tr>
+<tr><td>Lista de chequeo de cirugía segura</td><td>Equipo quirúrgico completo</td><td>Semestral</td><td>3 h</td><td>Jul. 2026</td></tr>
+<tr><td>Reprocesamiento de dispositivos médicos (AAMI ST79 / ISO 17665)</td><td>Técnicos Central de Reprocesamiento</td><td>Anual</td><td>8 h</td><td>Jun. 2026</td></tr>
+<tr><td>Actualización Resolución 3100 de 2019</td><td>Coordinadores y auditoría interna</td><td>Semestral</td><td>6 h</td><td>Ago. 2026</td></tr>
+<tr><td>Manejo de residuos hospitalarios (Decreto 780/2016)</td><td>Todo el personal del servicio</td><td>Anual</td><td>4 h</td><td>May. 2026</td></tr>
+<tr><td>Código azul / emergencias intraoperatorias</td><td>Anestesiología, enfermería, instrumentación</td><td>Semestral</td><td>3 h</td><td>Sep. 2026</td></tr>
+</table></div></div>
+<div class="card"><h3>Indicador de cobertura</h3><p style="margin:0">Cumplimiento del plan de capacitación 2026: <strong>96 %</strong> de las sesiones programadas ejecutadas. Asistencia promedio por sesión: 94 %.</p></div>
+`},
+{group:"Talento humano", id:"distribucion", title:"Formato de distribución de turnos", meta:"Coordinación de Enfermería y Cirugía", body:`
+<p class="lead">Distribución fija de personal por turno para el servicio de Salas de Cirugía, según capacidad instalada de 8 salas.</p>
+<div class="card"><div class="tbl-wrap"><table><tr><th>Cargo</th><th>Turno mañana (7:00–13:00)</th><th>Turno tarde (13:00–19:00)</th><th>Turno noche (19:00–7:00)</th><th>Total</th></tr>
+<tr><td>Instrumentadores quirúrgicos</td><td>8</td><td>8</td><td>4</td><td>20</td></tr>
+<tr><td>Anestesiólogos</td><td>5</td><td>5</td><td>3</td><td>13</td></tr>
+<tr><td>Enfermeras profesionales</td><td>6</td><td>6</td><td>4</td><td>16</td></tr>
+<tr><td>Auxiliares de enfermería</td><td>11</td><td>11</td><td>7</td><td>29</td></tr>
+<tr><td>Personal recuperación</td><td>3</td><td>3</td><td>3</td><td>9</td></tr>
+<tr><td>Técnicos Central de Reprocesamiento</td><td>4</td><td>4</td><td>2</td><td>10</td></tr>
+</table></div><p style="margin:10px 0 0;color:var(--sub);font-size:.85rem">Una sala permanece disponible 24 h para urgencias en todos los turnos; el personal de urgencias se activa desde el equipo de turno vigente.</p></div>
+`},
+{group:"Talento humano", id:"programacion", title:"Formato de programación de turnos", meta:"Semana del 22 al 28 de septiembre de 2026", body:`
+<p class="lead">Programación semanal individual — equipo de instrumentación quirúrgica (muestra).</p>
+<div class="card"><div class="tbl-wrap"><table><tr><th>Nombre</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th></tr>
+<tr><td>Duarte Rico, M.F.</td><td>M</td><td>M</td><td>D</td><td>M</td><td>M</td><td>D</td><td>D</td></tr>
+<tr><td>Rojas Salinas, T.</td><td>T</td><td>T</td><td>T</td><td>D</td><td>T</td><td>T</td><td>D</td></tr>
+<tr><td>Higuera Ortiz, J.</td><td>N</td><td>N</td><td>D</td><td>N</td><td>D</td><td>N</td><td>N</td></tr>
+<tr><td>Camacho Ruiz, S.</td><td>M</td><td>D</td><td>M</td><td>M</td><td>D</td><td>M</td><td>M</td></tr>
+</table></div>
+<p style="margin:10px 0 0;font-size:.82rem;color:var(--sub)">M = Mañana (7:00–13:00) · T = Tarde (13:00–19:00) · N = Noche (19:00–7:00) · D = Descanso. Cambios de turno requieren aprobación del coordinador con mínimo 48 h de anticipación.</p></div>
+`},
+{group:"Seguridad del paciente", id:"protocolos", title:"Protocolos de seguridad del paciente", meta:"Gestión de Calidad · Versión 4 · 2026", body:`
+<p class="lead">Protocolos vigentes que rigen la actividad quirúrgica y de bioseguridad del servicio.</p>
+<div class="card"><h3>Higiene de manos</h3><ul class="pl"><li>Aplicación de los 5 momentos OMS en todo contacto con el paciente y el campo estéril.</li>
+<li>Lavado quirúrgico con antiséptico de amplio espectro, técnica en 5 tiempos, duración 3–5 minutos antes del primer procedimiento del día.</li>
+<li>Fricción alcohólica entre procedimientos cuando las manos no están visiblemente sucias.</li></ul></div>
+<div class="card"><h3>Pausa quirúrgica (Lista de Chequeo de Cirugía Segura)</h3><ul class="pl">
+<li><strong>Sign In</strong> (antes de anestesia): identificación del paciente, sitio quirúrgico marcado, consentimientos firmados, riesgo de vía aérea y sangrado revisado.</li>
+<li><strong>Time Out</strong> (antes de incisión): confirmación verbal de equipo, procedimiento, sitio y lateralidad; profilaxis antibiótica administrada; disponibilidad de imágenes.</li>
+<li><strong>Sign Out</strong> (antes de salir de sala): conteo de gasas e instrumental completo, rotulado de muestras, revisión de incidentes con el equipo.</li></ul></div>
+<div class="card"><h3>Manejo de procedimientos contaminados</h3><ul class="pl">
+<li>Clasificación de la cirugía como limpia, limpia-contaminada, contaminada o sucia desde la programación.</li>
+<li>Circuito diferenciado de circulación de personal, material e instrumental para casos contaminados, evitando cruce con flujo limpio.</li>
+<li>Doble empaque y rotulado de alerta biológica para instrumental utilizado; transporte inmediato en contenedor cerrado a la Central de Reprocesamiento.</li></ul></div>
+<div class="card"><h3>Ingreso del paciente a salas de cirugía</h3><ul class="pl">
+<li>Verificación de identificación con brazalete, historia clínica y consentimientos informados completos.</li>
+<li>Confirmación de ayuno, retiro de prótesis y objetos metálicos, y verificación de la lista prequirúrgica.</li>
+<li>Traslado en camilla exclusiva del área quirúrgica; cambio de vestimenta según barrera de la zona restringida.</li></ul></div>
+<div class="card"><h3>Manejo de residuos</h3><ul class="pl">
+<li>Clasificación según Decreto 780 de 2016: biosanitarios (bolsa roja), cortopunzantes (guardián), ordinarios (bolsa negra) y anatomopatológicos (contenedor específico).</li>
+<li>Recolección interna mínimo cada turno; ruta sanitaria diferenciada de la ruta de insumos limpios.</li>
+<li>Registro de pesaje y entrega a gestor externo autorizado, con manifiesto de disposición final.</li></ul></div>
+`},
+{group:"Seguridad del paciente", id:"eventos", title:"Registros de eventos adversos", meta:"Comité de Seguridad del Paciente · 2026", body:`
+<p class="lead">Registro consolidado de eventos e incidentes reportados en el servicio quirúrgico.</p>
+<div class="card"><div class="tbl-wrap"><table><tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Clasificación</th><th>Acción</th></tr>
+<tr><td>14 jul 2026</td><td>Incidente (near miss)</td><td>Conteo de gasas con discrepancia inicial, resuelto antes del cierre</td><td><span class="pill">No evitable</span></td><td>Refuerzo en Sign Out; sin daño al paciente</td></tr>
+<tr><td>02 ago 2026</td><td>Evento adverso</td><td>Infección de sitio quirúrgico superficial en cirugía colorrectal</td><td><span class="pill warn">Evitable, en análisis</span></td><td>Análisis causa raíz, ajuste de profilaxis antibiótica</td></tr>
+<tr><td>09 sep 2026</td><td>Incidente</td><td>Empaque estéril con deterioro detectado antes de distribución</td><td><span class="pill">No evitable</span></td><td>Material reprocesado; refuerzo de inspección visual en CRE</td></tr>
+</table></div><p style="margin:10px 0 0;color:var(--sub);font-size:.85rem">Todo evento se analiza en el Comité de Seguridad del Paciente dentro de los 15 días siguientes, con plan de acción y seguimiento a 30 y 90 días.</p></div>
+`},
+{group:"Seguridad del paciente", id:"indicadores", title:"Indicadores de gestión del servicio", meta:"Últimos 3 meses · Salas de Cirugía", body:`
+<div class="card"><h3>Cumplimiento lista de cirugía segura y trazabilidad de instrumental</h3>
+<div class="bars">
+<div class="bar"><i style="height:95px;width:70%"></i>95 %<br>Jul</div>
+<div class="bar"><i style="height:97px;width:70%"></i>97 %<br>Ago</div>
+<div class="bar"><i style="height:98px;width:70%"></i>98 %<br>Sep</div>
+<div class="bar"><i style="background:linear-gradient(180deg,#8FBFD9,#4C86A8);height:91px;width:70%"></i>91 %<br>Jul¹</div>
+<div class="bar"><i style="background:linear-gradient(180deg,#8FBFD9,#4C86A8);height:94px;width:70%"></i>94 %<br>Ago¹</div>
+<div class="bar"><i style="background:linear-gradient(180deg,#8FBFD9,#4C86A8);height:96px;width:70%"></i>96 %<br>Sep¹</div>
+</div><p style="font-size:.78rem;color:var(--sub);margin-top:8px">Verde: cumplimiento lista de cirugía segura · Azul¹: trazabilidad completa de instrumental</p></div>
+<div class="card"><div class="tbl-wrap"><table><tr><th>Indicador</th><th>Julio</th><th>Agosto</th><th>Septiembre</th><th>Meta</th></tr>
+<tr><td>Cirugías realizadas</td><td>676</td><td>694</td><td>702</td><td>—</td></tr>
+<tr><td>Suspensión de cirugías</td><td>5,4 %</td><td>4,8 %</td><td>4,3 %</td><td>&lt; 5 %</td></tr>
+<tr><td>Infección de sitio quirúrgico</td><td>1,9 %</td><td>1,7 %</td><td>1,6 %</td><td>&lt; 2 %</td></tr>
+<tr><td>Cumplimiento mantenimiento preventivo</td><td>93 %</td><td>95 %</td><td>97 %</td><td>≥ 95 %</td></tr>
+<tr><td>Eventos relacionados con esterilidad</td><td>3</td><td>2</td><td>1</td><td>Tendencia a la reducción</td></tr>
+</table></div></div>
+`},
+{group:"Central de Reprocesamiento", id:"trazabilidad", title:"Sistema de trazabilidad de instrumental", meta:"Central de Reprocesamiento · Software SteriTrack HMA", body:`
+<p class="lead">La Central de Reprocesamiento identifica cada set y cada instrumento mediante código de barras vinculado a un registro digital, garantizando trazabilidad completa desde la recepción hasta el uso en el paciente.</p>
+<div class="card"><h3>Ciclo de vida registrado</h3><ul class="pl">
+<li><strong>Recepción en sucio:</strong> escaneo del set, verificación contra guía fotográfica y conteo de piezas.</li>
+<li><strong>Lavado y descontaminación:</strong> registro de lavadora termodesinfectadora, lote y operario.</li>
+<li><strong>Empaque y esterilización:</strong> autoclave, número de ciclo, temperatura, tiempo, indicador químico y biológico asociado.</li>
+<li><strong>Almacenamiento estéril y distribución:</strong> ubicación, fecha de vencimiento del empaque, servicio y sala de destino.</li>
+<li><strong>Uso y devolución:</strong> paciente y procedimiento (cuando aplica), hora de devolución a la Central.</li></ul></div>
+<div class="card"><h3>Qué permite el sistema</h3><ul class="pl">
+<li>Retiro inmediato de un lote completo ante un control biológico positivo (trazabilidad hacia atrás).</li>
+<li>Identificación de responsables en cada etapa del proceso.</li>
+<li>Reportes de indicadores de oportunidad y devolución incompleta de sets.</li></ul>
+<p style="margin:10px 0 0;color:var(--sub);font-size:.85rem">Área de oportunidad identificada: registros de devolución diligenciados manualmente en algunos turnos de alta demanda; se adelanta migración a lectura RFID en fase piloto.</p></div>
+`},
+{group:"Central de Reprocesamiento", id:"controles", title:"Registros de controles de esterilización", meta:"3 autoclaves de vapor · 1 equipo de peróxido de hidrógeno", body:`
+<div class="card"><div class="tbl-wrap"><table><tr><th>Tipo de control</th><th>Frecuencia</th><th>Equipo</th><th>Último resultado</th></tr>
+<tr><td>Control físico (temperatura, presión, tiempo)</td><td>Cada ciclo</td><td>Autoclave 1, 2, 3</td><td>Conforme</td></tr>
+<tr><td>Control químico interno y externo</td><td>Cada paquete</td><td>Todos</td><td>Conforme</td></tr>
+<tr><td>Control biológico (esporas)</td><td>Semanal (diario en cargas con implantes)</td><td>Autoclave 1, 2, 3</td><td>Negativo</td></tr>
+<tr><td>Control biológico equipo de peróxido de hidrógeno</td><td>Cada carga</td><td>Equipo baja temperatura</td><td>Negativo</td></tr>
+<tr><td>Prueba Bowie-Dick</td><td>Diaria, primer ciclo del día</td><td>Autoclave 1, 2, 3</td><td>Conforme</td></tr>
+</table></div><p style="margin:10px 0 0;color:var(--sub);font-size:.85rem">Hallazgo en seguimiento: durante auditoría interna se identificaron registros de control biológico no diligenciados con oportunidad en dos jornadas de alta demanda; no se evidenció liberación de material sin control. Acción correctiva en curso.</p></div>
+`},
+{group:"Central de Reprocesamiento", id:"instrumental", title:"Protocolo de entrega, recepción y lavado de instrumental", meta:"Circuito sucio → limpio → estéril", body:`
+<div class="card"><ul class="pl">
+<li><strong>Entrega desde sala:</strong> el instrumentador cuenta el set contra la guía quirúrgica, lo cubre con campo húmedo y lo traslada en contenedor cerrado.</li>
+<li><strong>Recepción en sucio:</strong> verificación de piezas, registro de procedencia (sala, procedimiento, clasificación de riesgo biológico).</li>
+<li><strong>Prelavado enzimático:</strong> inmersión inmediata para evitar secado de materia orgánica.</li>
+<li><strong>Lavado manual y ultrasónico:</strong> cepillado de articulaciones y lúmenes, verificación visual de restos.</li>
+<li><strong>Lavadora termodesinfectadora:</strong> ciclo validado con registro de lote y temperatura de desinfección.</li>
+<li><strong>Secado e inspección funcional:</strong> revisión bajo lupa de filos, articulaciones y ausencia de residuos.</li>
+<li><strong>Armado y empaque:</strong> según guía fotográfica del set, con indicador químico interno y sellado con indicador externo.</li>
+<li><strong>Esterilización y liberación:</strong> verificación de parámetros del ciclo antes de habilitar el set para distribución.</li>
+<li><strong>Entrega en estéril:</strong> confirmación de indicador viraje y firma de recibido en sala.</li></ul></div>
+`},
+{group:"Central de Reprocesamiento", id:"mantenimiento", title:"Certificados de mantenimiento de equipos", meta:"Gestión Biomédica · Programa preventivo y correctivo", body:`
+<div class="card"><div class="tbl-wrap"><table><tr><th>Equipo</th><th>Última intervención</th><th>Próxima</th><th>Proveedor</th><th>Resultado</th></tr>
+<tr><td>Autoclave de vapor 1 (Getinge GE-88)</td><td>10 ago 2026</td><td>10 nov 2026</td><td>Biomedical Service Andina</td><td>Conforme</td></tr>
+<tr><td>Autoclave de vapor 2 y 3</td><td>15 ago 2026</td><td>15 nov 2026</td><td>Biomedical Service Andina</td><td>Conforme</td></tr>
+<tr><td>Equipo de peróxido de hidrógeno</td><td>02 sep 2026</td><td>02 dic 2026</td><td>Sterrad Colombia S.A.S.</td><td>Conforme</td></tr>
+<tr><td>Torres de laparoscopia (x4)</td><td>20 ago 2026</td><td>20 feb 2027</td><td>Storz Andina</td><td>Conforme</td></tr>
+<tr><td>Máquinas de anestesia (x8)</td><td>05 sep 2026</td><td>05 mar 2027</td><td>Dräger Colombia</td><td>Conforme</td></tr>
+<tr><td>Lavadora termodesinfectadora</td><td>28 ago 2026</td><td>28 nov 2026</td><td>Biomedical Service Andina</td><td>Conforme</td></tr>
+</table></div><p style="margin:10px 0 0;color:var(--sub);font-size:.85rem">Todo mantenimiento preventivo genera certificado con fecha, hallazgos, repuestos utilizados y firma del técnico responsable, archivado en la hoja de vida del equipo.</p></div>
+`},
+{group:"Central de Reprocesamiento", id:"invima", title:"Certificados INVIMA de dispositivos médicos", meta:"Registros sanitarios vigentes", body:`
+<div class="card"><div class="tbl-wrap"><table><tr><th>Dispositivo</th><th>Registro INVIMA</th><th>Vigencia</th><th>Fabricante / Importador</th></tr>
+<tr><td>Set de laparotomía reutilizable</td><td>2024DM-0006213</td><td>Ago. 2029</td><td>Aesculap Andina</td></tr>
+<tr><td>Sutura sintética absorbible</td><td>2023DM-0011894</td><td>May. 2028</td><td>Johnson &amp; Johnson Medical Colombia</td></tr>
+<tr><td>Empaque grado médico (papel-film)</td><td>2022DM-0003057</td><td>Mar. 2027</td><td>Halyard Colombia</td></tr>
+<tr><td>Indicador biológico autolectura</td><td>2023DM-0009120</td><td>Ene. 2028</td><td>3M Colombia</td></tr>
+<tr><td>Torre de laparoscopia</td><td>2021DM-0002481</td><td>Dic. 2027</td><td>Karl Storz Andina</td></tr>
+</table></div><p style="margin:10px 0 0;color:var(--sub);font-size:.85rem">El área de compras verifica vigencia del registro INVIMA antes de cada adquisición y mantiene el archivo físico y digital disponible para auditoría.</p></div>
+`},
+{group:"Documentos clínicos y financieros", id:"consentimientos", title:"Formatos de consentimiento informado", meta:"Enfermería · Anestesiología · Cirugía", body:`
+<div class="grid2">
+<div class="card"><h3>Enfermería perioperatoria</h3><ul class="pl"><li>Cuidados perioperatorios y de posición quirúrgica</li><li>Riesgo de lesión por posicionamiento y dispositivos de compresión</li><li>Colocación de sonda vesical y accesos venosos</li><li>Firma del paciente/representante y de enfermería responsable</li></ul></div>
+<div class="card"><h3>Anestesiología</h3><ul class="pl"><li>Tipo de técnica anestésica propuesta y alternativas</li><li>Riesgos generales y específicos según ASA</li><li>Ayuno y antecedentes verificados</li><li>Firma del anestesiólogo y del paciente/representante</li></ul></div>
+<div class="card"><h3>Cirugía</h3><ul class="pl"><li>Descripción del procedimiento, riesgos y beneficios</li><li>Alternativas terapéuticas disponibles</li><li>Autorización de manejo de muestras y, si aplica, registro fotográfico</li><li>Firma del cirujano tratante y del paciente/representante</li></ul></div>
+<div class="card"><h3>Trazabilidad del consentimiento</h3><ul class="pl"><li>Verificación de firma completa en el Sign In de la pausa quirúrgica</li><li>Archivo en historia clínica electrónica con marca de tiempo</li><li>Reemplazo obligatorio ante cambio de plan quirúrgico</li></ul></div>
+</div>
+`},
+{group:"Documentos clínicos y financieros", id:"gastos", title:"Formato de hoja de gastos de insumos", meta:"Farmacia · Central de Reprocesamiento", body:`
+<p class="lead">Registro de consumo de insumos médico-quirúrgicos por procedimiento, con cargo diferenciado a farmacia y a la Central de Reprocesamiento.</p>
+<div class="card"><h3>Insumos de farmacia (ejemplo — colecistectomía laparoscópica)</h3><div class="tbl-wrap"><table><tr><th>Código</th><th>Insumo</th><th>Cant.</th><th>Vlr. unitario</th><th>Vlr. total</th></tr>
+<tr><td>FQ-1042</td><td>Sutura sintética absorbible 2-0</td><td>3</td><td>$18.500</td><td>$55.500</td></tr>
+<tr><td>FQ-2210</td><td>Clip de titanio para conducto cístico (caja x6)</td><td>1</td><td>$142.000</td><td>$142.000</td></tr>
+<tr><td>FQ-3305</td><td>Bolsa de extracción de espécimen</td><td>1</td><td>$68.000</td><td>$68.000</td></tr>
+</table></div></div>
+<div class="card"><h3>Insumos de Central de Reprocesamiento</h3><div class="tbl-wrap"><table><tr><th>Código</th><th>Insumo</th><th>Cant.</th><th>Vlr. unitario</th><th>Vlr. total</th></tr>
+<tr><td>CE-0512</td><td>Empaque grado médico (papel-film) por set</td><td>1</td><td>$9.200</td><td>$9.200</td></tr>
+<tr><td>CE-0630</td><td>Indicador químico interno</td><td>2</td><td>$1.100</td><td>$2.200</td></tr>
+<tr><td>CE-0741</td><td>Indicador biológico autolectura</td><td>1</td><td>$14.800</td><td>$14.800</td></tr>
+</table></div><p style="margin:10px 0 0;color:var(--sub);font-size:.85rem">La hoja de gastos se consolida por paciente y servicio, y alimenta el costeo del procedimiento y el reporte de consumo mensual de la Central de Reprocesamiento.</p></div>
+`}
+];
+
+const nav = document.getElementById('nav');
+const main = document.getElementById('main');
+const groups = [...new Set(DOCS.map(d=>d.group))];
+groups.forEach(g=>{
+  const gd = document.createElement('div'); gd.className='grp';
+  gd.innerHTML = `<div class="grp-title">${g}</div>`;
+  DOCS.filter(d=>d.group===g).forEach(d=>{
+    const b = document.createElement('button'); b.textContent = d.title; b.dataset.id = d.id;
+    b.onclick = ()=>show(d.id);
+    gd.appendChild(b);
+  });
+  nav.appendChild(gd);
+});
+const HERO = `
+<div class="hero reveal">
+  <h1>Hospital Metropolitano de los Andes S.A.S.</h1>
+  <p>Institución privada de alta complejidad en Bogotá D.C., 11 años de funcionamiento. Servicio de Salas de Cirugía y Central de Reprocesamiento de Dispositivos Médicos preparados para auditoría de habilitación bajo la Resolución 3100 de 2019.</p>
+  <div class="who">Expediente digital elaborado y curado por Santiago Betancourth</div>
+  <svg class="ekg" viewBox="0 0 600 60" preserveAspectRatio="none"><path d="M0,30 L120,30 L140,10 L160,50 L180,30 L230,30 L245,18 L260,30 L600,30"/></svg>
+</div>
+<div class="kpis reveal">
+  <div class="kpi"><b>8</b><span>Salas de cirugía</span></div>
+  <div class="kpi"><b>700</b><span>Cirugías / mes</span></div>
+  <div class="kpi"><b>20</b><span>Instrumentadores quirúrgicos</span></div>
+  <div class="kpi"><b>170 m²</b><span>Central de Reprocesamiento</span></div>
+  <div class="kpi"><b>98 %</b><span>Cirugía segura (sep. 2026)</span></div>
+  <div class="kpi"><b>1,6 %</b><span>Infección sitio quirúrgico</span></div>
+</div>
+<div class="card"><h3 class="serif">Avance del expediente de evidencias</h3>
+<div class="ring-wrap"><svg class="ring" width="90" height="90" viewBox="0 0 90 90"><circle class="bg" cx="45" cy="45" r="42"></circle><circle class="fg" cx="45" cy="45" r="42"></circle></svg>
+<div><b style="font-family:'Zilla Slab',serif;font-size:1.4rem;color:var(--teal-2)">14 / 14</b><br><span style="color:var(--sub);font-size:.85rem">categorías de evidencia documental cargadas y listas para revisión del equipo auditor.</span></div></div></div>
+<div class="card"><h3 class="serif">Situación de cumplimiento</h3><ul class="pl">
+<li><span class="pill">Fortaleza</span> Mantenimiento biomédico al día y controles de esterilización físicos, químicos y biológicos activos.</li>
+<li><span class="pill warn">Oportunidad</span> Registro manual de devolución de instrumental con inconsistencias ocasionales en alta demanda.</li>
+<li><span class="pill crit">En verificación</span> Oportunidad en el diligenciamiento de controles biológicos en dos jornadas de alta demanda.</li></ul></div>
+<h3 class="serif" style="margin:20px 0 10px">Acceso rápido</h3>
+<div class="quicknav">
+  <button class="qn" onclick="show('protocolos')"><b>Protocolos de seguridad</b><small>Lavado de manos, pausa quirúrgica, residuos…</small></button>
+  <button class="qn" onclick="show('trazabilidad')"><b>Sistema de trazabilidad</b><small>Código de barras y registro digital</small></button>
+  <button class="qn" onclick="show('indicadores')"><b>Indicadores de gestión</b><small>Últimos 3 meses, con gráficas</small></button>
+  <button class="qn" onclick="show('invima')"><b>Certificados INVIMA</b><small>Registros sanitarios vigentes</small></button>
+</div>`;
+
+DOCS.forEach(d=>{
+  const sec = document.createElement('section'); sec.className='doc'; sec.id='doc-'+d.id;
+  if(d.id==='inicio'){
+    sec.innerHTML = HERO;
+  } else {
+    sec.innerHTML = `<div class="letterhead"><div><h1>${d.title}</h1><div class="meta">${d.meta}</div></div><div class="stamp">Hospital Metropolitano de los Andes S.A.S.</div></div>${d.body}
+    <div class="sig"><div>Elaboró: Coordinación de Calidad</div><div>Reviso: Dirección Científica</div><div>Vigencia: 2026</div></div>
+    <div class="foot">Documento de fines académicos — evidencia ficticia para auditoría de habilitación, Resolución 3100 de 2019.<br>Página creada por Santiago Betancourth.</div>`;
+  }
+  main.appendChild(sec);
+});
+
+function filterNav(q){
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('nav.side .grp').forEach(g=>{
+    let any=false;
+    g.querySelectorAll('button').forEach(b=>{
+      const m = b.textContent.toLowerCase().includes(q);
+      b.classList.toggle('hide', !m);
+      if(m) any=true;
+    });
+    g.classList.toggle('hide', !any && q.length>0);
+  });
+}
+function toggleTheme(){
+  const root = document.documentElement;
+  const dark = root.getAttribute('data-theme')==='dark';
+  root.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = dark ? '🌙 Modo oscuro' : '☀️ Modo claro';
+  try{ localStorage.setItem('hma-theme', dark?'light':'dark'); }catch(e){}
+}
+try{
+  const saved = localStorage.getItem('hma-theme');
+  if(saved){ document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('themeBtn').textContent = saved==='dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'; }
+}catch(e){}
+function show(id){
+  document.querySelectorAll('.doc').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav.side button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('doc-'+id).classList.add('active');
+  document.querySelector(`nav.side button[data-id="${id}"]`).classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+show(DOCS[0].id);
+</script>
+</body>
+</html>
